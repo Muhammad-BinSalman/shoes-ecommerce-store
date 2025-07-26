@@ -1,6 +1,11 @@
-import { Carousel } from 'components/carousel';
+import ConverseCtaSection from '@/components/converse-cta-section';
+import LandingHero from '@/components/landing-hero';
+import NewSportsSection from '@/components/new-sports-section';
+import VideoBannerSection from '@/components/video-banner-section';
+import Carousel from 'components/carousel-swiper';
 import { ThreeItemGrid } from 'components/grid/three-items';
 import Footer from 'components/layout/footer';
+import { getCollectionProducts } from 'lib/shopify';
 
 export const metadata = {
   description:
@@ -10,11 +15,18 @@ export const metadata = {
   }
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Fetch products from the hidden-homepage-carousel collection
+  const products = await getCollectionProducts({ collection: 'hidden-homepage-carousel' });
+
   return (
     <>
+      <LandingHero/>
+      <Carousel products={products} />
+      <VideoBannerSection />
+      <ConverseCtaSection />
       <ThreeItemGrid />
-      <Carousel />
+      <NewSportsSection />
       <Footer />
     </>
   );

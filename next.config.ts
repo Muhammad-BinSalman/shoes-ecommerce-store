@@ -1,6 +1,6 @@
 export default {
   experimental: {
-    ppr: true,
+    ppr: false, // Disable PPR to fix opengraph image build error
     inlineCss: true,
     useCache: true
   },

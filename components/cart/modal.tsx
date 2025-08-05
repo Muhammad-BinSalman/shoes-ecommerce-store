@@ -34,18 +34,10 @@ export default function CartModal() {
     }
   }, [cart]);
 
+  // Removed auto-open on cart quantity change; cart only opens on user action
   useEffect(() => {
-    if (
-      cart?.totalQuantity &&
-      cart?.totalQuantity !== quantityRef.current &&
-      cart?.totalQuantity > 0
-    ) {
-      if (!isOpen) {
-        setIsOpen(true);
-      }
-      quantityRef.current = cart?.totalQuantity;
-    }
-  }, [isOpen, cart?.totalQuantity, quantityRef]);
+    quantityRef.current = cart?.totalQuantity;
+  }, [cart?.totalQuantity]);
 
   return (
     <>
@@ -215,9 +207,9 @@ export default function CartModal() {
                       />
                     </div>
                   </div>
-                  <form action={redirectToCheckout}>
-                    <CheckoutButton />
-                  </form>
+                  {cart && cart.lines.length > 0 && (
+                    <CheckoutButton closeCart={closeCart} />
+                  )}
                 </div>
               )}
             </Dialog.Panel>
@@ -241,14 +233,23 @@ function CloseCart({ className }: { className?: string }) {
   );
 }
 
-function CheckoutButton() {
+import { useRouter } from 'next/navigation';
+
+type CheckoutButtonProps = { closeCart: () => void };
+
+function CheckoutButton({ closeCart }: CheckoutButtonProps) {
+  const router = useRouter();
   const { pending } = useFormStatus();
 
   return (
     <button
       className="block w-full rounded-full bg-blue-600 p-3 text-center text-sm font-medium text-white opacity-90 hover:opacity-100"
-      type="submit"
+      type="button"
       disabled={pending}
+      onClick={() => {
+        closeCart();
+        router.push('/checkout');
+      }}
     >
       {pending ? <LoadingDots className="bg-white" /> : 'Proceed to Checkout'}
     </button>

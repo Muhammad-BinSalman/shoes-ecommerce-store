@@ -40,7 +40,7 @@ export default function VideoBannerSection() {
           </Link>
         </div>
       </div>
-      <CurvedLoop marqueeText="Thrift ✦ hard. ✦ Look rich. ✦ " speed={1.5} curveAmount={200} interactive={true} className="text-black bg-white" />
+      <CurvedLoop marqueeText="Thrift hard. ✦ Look rich. ✦ " speed={1.5} curveAmount={200} interactive={true} className="text-black bg-white" />
     </section>
   );
 } 

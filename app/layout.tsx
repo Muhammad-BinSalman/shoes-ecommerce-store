@@ -7,6 +7,7 @@ import { ReactNode } from 'react';
 import { Toaster } from 'sonner';
 import './globals.css';
 import { baseUrl } from '@/lib/utils';
+import Footer from '@/components/layout/footer';
 
 const { SITE_NAME } = process.env;
 
@@ -35,11 +36,12 @@ export default async function RootLayout({
       <body className="bg-neutral-50 text-black selection:bg-teal-300">
         <CartProvider cartPromise={cart}>
           <Navbar />
+            <Toaster closeButton />
           <main>
             {children}
-            <Toaster closeButton />
             <WelcomeToast />
           </main>
+          <Footer />
         </CartProvider>
       </body>
     </html>

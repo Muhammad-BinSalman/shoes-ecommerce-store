@@ -24,6 +24,9 @@ type CartAction =
   | {
       type: 'ADD_ITEM';
       payload: { variant: ProductVariant; product: Product };
+    }
+  | {
+      type: 'CLEAR_CART';
     };
 
 type CartContextType = {
@@ -134,6 +137,8 @@ function cartReducer(state: Cart | undefined, action: CartAction): Cart {
   const currentCart = state || createEmptyCart();
 
   switch (action.type) {
+    case 'CLEAR_CART':
+      return createEmptyCart();
     case 'UPDATE_ITEM': {
       const { merchandiseId, updateType } = action.payload;
       const updatedLines = currentCart.lines
@@ -227,11 +232,16 @@ export function useCart() {
     updateOptimisticCart({ type: 'ADD_ITEM', payload: { variant, product } });
   };
 
+  const clearCart = () => {
+    updateOptimisticCart({ type: 'CLEAR_CART' });
+  };
+
   return useMemo(
     () => ({
       cart: optimisticCart,
       updateCartItem,
-      addCartItem
+      addCartItem,
+      clearCart
     }),
     [optimisticCart]
   );

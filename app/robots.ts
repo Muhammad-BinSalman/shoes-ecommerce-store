@@ -1,13 +1,12 @@
-import { baseUrl } from 'lib/utils';
+import type { MetadataRoute } from 'next';
 
-export default function robots() {
+export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [
-      {
-        userAgent: '*'
-      }
-    ],
-    sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl
-  };
+    rules: {
+      userAgent: '*',
+      allow: '/',
+    },
+    sitemap: 'https://www.thumb-thrift.shop/sitemap.xml',
+    host: 'https://www.thumb-thrift.shop',
+  }
 }

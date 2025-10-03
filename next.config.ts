@@ -1,3 +1,5 @@
+const isDev = process.env.NODE_ENV !== 'production';
+
 export default {
   experimental: {
     ppr: false, // Disable PPR to fix opengraph image build error
@@ -20,5 +22,9 @@ export default {
       },
     ],
     formats: ['image/avif', 'image/webp'],
+    // Avoid local dev timeouts by bypassing the image optimizer in development
+    unoptimized: isDev,
+    // Cache successfully fetched remote images longer to reduce refetching
+    minimumCacheTTL: 60 * 60 * 24 // 1 day
   },
 };

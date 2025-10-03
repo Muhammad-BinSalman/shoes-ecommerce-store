@@ -103,7 +103,7 @@ const CircularText: React.FC<CircularTextProps> = ({
 
   return (
     <motion.div
-    className={`m-0 mx-auto rounded-full w-[124px] h-[124px] relative font-black text-white text-center cursor-pointer origin-center ${className}`}
+    className={`m-0 mx-auto rounded-full w-[110px] h-[110px] sm:w-[128px] sm:h-[128px] relative font-black text-white text-center cursor-pointer origin-center ${className}`}
     style={{ rotate: rotation }}
       initial={{ rotate: 0 }}
       animate={controls}
@@ -120,7 +120,7 @@ const CircularText: React.FC<CircularTextProps> = ({
         return (
           <span
             key={i}
-            className="absolute inline-block inset-0 text-2xl transition-all duration-500 ease-[cubic-bezier(0,0,0,1)]"
+            className="absolute inline-block inset-0 text-[19px] sm:text-[22px] transition-all duration-500 ease-[cubic-bezier(0,0,0,1)]"
             style={{ transform, WebkitTransform: transform }}
           >
             {letter}

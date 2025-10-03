@@ -2,6 +2,8 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import Label from '../label';
 
+const isDev = process.env.NODE_ENV !== 'production';
+
 export function GridTileImage({
   isInteractive = true,
   active,
@@ -34,6 +36,8 @@ export function GridTileImage({
             'transition duration-300 ease-in-out group-hover:scale-105': isInteractive
           })}
           {...props}
+          // Default to bypass optimizer in development to avoid upstream timeouts
+          unoptimized={props.unoptimized ?? isDev}
         />
       ) : null}
       {label ? (

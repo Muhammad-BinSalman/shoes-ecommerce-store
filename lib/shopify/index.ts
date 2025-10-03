@@ -64,6 +64,21 @@ const domain = process.env.SHOPIFY_STORE_DOMAIN
 const endpoint = `${domain}${SHOPIFY_GRAPHQL_API_ENDPOINT}`;
 const key = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!;
 
+const DEFAULT_TIMEOUT_MS = Number(process.env.SHOPIFY_FETCH_TIMEOUT_MS ?? 10000);
+const MAX_RETRIES = Number(process.env.SHOPIFY_FETCH_MAX_RETRIES ?? 2);
+
+async function fetchWithTimeout(url: string, options: RequestInit & { timeoutMs?: number } = {}) {
+  const { timeoutMs = DEFAULT_TIMEOUT_MS, ...rest } = options;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { ...rest, signal: controller.signal });
+    return res;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 type ExtractVariables<T> = T extends { variables: object }
   ? T['variables']
   : never;
@@ -77,45 +92,88 @@ export async function shopifyFetch<T>({
   query: string;
   variables?: ExtractVariables<T>;
 }): Promise<{ status: number; body: T } | never> {
-  try {
-    const result = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': key,
-        ...headers
-      },
-      body: JSON.stringify({
-        ...(query && { query }),
-        ...(variables && { variables })
-      })
-    });
+  let attempt = 0;
+  let lastError: any = null;
+  while (attempt <= MAX_RETRIES) {
+    try {
+      const result = await fetchWithTimeout(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': key,
+          ...headers
+        },
+        body: JSON.stringify({
+          ...(query && { query }),
+          ...(variables && { variables })
+        })
+      });
 
-    const body = await result.json();
+      const status = result.status;
+      let body: any = null;
+      try {
+        body = await result.json();
+      } catch (jsonErr) {
+        // Non-JSON response
+        throw {
+          cause: 'Invalid JSON from Shopify',
+          status,
+          message: (jsonErr as Error)?.message || 'Failed to parse JSON',
+          query
+        };
+      }
 
-    if (body.errors) {
-      throw body.errors[0];
-    }
+      if (!result.ok || body?.errors) {
+        const err = body?.errors?.[0];
+        throw {
+          cause: err?.cause?.toString?.() || 'ShopifyError',
+          status: err?.status || status || 500,
+          message: err?.message || `Shopify request failed with status ${status}`,
+          query
+        };
+      }
 
-    return {
-      status: result.status,
-      body
-    };
-  } catch (e) {
-    if (isShopifyError(e)) {
+      return {
+        status,
+        body
+      };
+    } catch (e: any) {
+      lastError = e;
+      // AbortError or network error or timeout
+      const isAbort = e?.name === 'AbortError' || /aborted|timeout/i.test(String(e?.cause || e?.message));
+      const isNetwork = /NetworkError|ECONNRESET|ENOTFOUND|EAI_AGAIN|SocketError|fetch failed/i.test(
+        String(e?.cause || e?.message || e)
+      );
+      const retryable = isAbort || isNetwork;
+      if (attempt < MAX_RETRIES && retryable) {
+        const backoff = 300 * Math.pow(2, attempt);
+        await new Promise((r) => setTimeout(r, backoff));
+        attempt++;
+        continue;
+      }
+
+      if (isShopifyError(e)) {
+        throw {
+          cause: e.cause?.toString() || 'unknown',
+          status: e.status || 500,
+          message: e.message,
+          query
+        };
+      }
+
       throw {
-        cause: e.cause?.toString() || 'unknown',
-        status: e.status || 500,
-        message: e.message,
+        cause: e?.cause?.toString?.() || e?.message || 'unknown',
+        status: e?.status || 500,
+        message: e?.message || 'fetch failed',
+        endpoint,
+        domain,
         query
       };
     }
-
-    throw {
-      error: e,
-      query
-    };
   }
+
+  // Should not reach here, but in case
+  throw lastError || { status: 500, message: 'Unknown Shopify fetch error', query };
 }
 
 const removeEdgesAndNodes = <T>(array: Connection<T>): T[] => {
@@ -270,17 +328,23 @@ export async function getCart(): Promise<Cart | undefined> {
     return undefined;
   }
 
-  const res = await shopifyFetch<ShopifyCartOperation>({
-    query: getCartQuery,
-    variables: { cartId }
-  });
+  try {
+    const res = await shopifyFetch<ShopifyCartOperation>({
+      query: getCartQuery,
+      variables: { cartId }
+    });
 
-  // Old carts becomes `null` when you checkout.
-  if (!res.body.data.cart) {
+    // Old carts becomes `null` when you checkout.
+    if (!res.body.data.cart) {
+      return undefined;
+    }
+
+    return reshapeCart(res.body.data.cart);
+  } catch (err) {
+    // Swallow network/timeout errors so pages don't 500; callers can handle undefined
+    console.error('Failed to fetch Shopify cart', { cartId, err });
     return undefined;
   }
-
-  return reshapeCart(res.body.data.cart);
 }
 
 export async function getCollection(
@@ -368,21 +432,32 @@ export async function getMenu(handle: string): Promise<Menu[]> {
   // cacheTag(TAGS.collections);
   // cacheLife('days');
 
-  const res = await shopifyFetch<ShopifyMenuOperation>({
-    query: getMenuQuery,
-    variables: {
-      handle
-    }
-  });
-  return (
-    res.body?.data?.menu?.items.map((item: { title: string; url: string }) => ({
-      title: item.title,
-      path: item.url
-        .replace(domain, '')
-        .replace('/collections', '/search')
-        .replace('/pages', '')
-    })) || []
-  );
+  try {
+    const res = await shopifyFetch<ShopifyMenuOperation>({
+      query: getMenuQuery,
+      variables: {
+        handle
+      }
+    });
+    return (
+      res.body?.data?.menu?.items.map((item: { title: string; url: string }) => ({
+        title: item.title,
+        path: item.url
+          .replace(domain, '')
+          .replace('/collections', '/search')
+          .replace('/pages', '')
+      })) || []
+    );
+  } catch (err) {
+    console.error('Failed to load Shopify menu', {
+      handle,
+      domain,
+      endpoint,
+      err
+    });
+    // Fallback to empty menu so the app still renders
+    return [];
+  }
 }
 
 export async function getPage(handle: string): Promise<Page> {

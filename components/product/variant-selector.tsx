@@ -19,10 +19,8 @@ export function VariantSelector({
 }) {
   const { state, updateOption } = useProduct();
   const updateURL = useUpdateURL();
-  const hasNoOptionsOrJustOneOption =
-    !options.length || (options.length === 1 && options[0]?.values.length === 1);
 
-  if (hasNoOptionsOrJustOneOption) {
+  if (!options.length) {
     return null;
   }
 

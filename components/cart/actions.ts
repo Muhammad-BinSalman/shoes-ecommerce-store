@@ -2,11 +2,11 @@
 
 import { TAGS } from 'lib/constants';
 import {
-  addToCart,
-  createCart,
-  getCart,
-  removeFromCart,
-  updateCart
+    addToCart,
+    createCart,
+    getCart,
+    removeFromCart,
+    updateCart
 } from 'lib/shopify';
 import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
@@ -96,8 +96,21 @@ export async function updateItemQuantity(
 }
 
 export async function redirectToCheckout() {
-  let cart = await getCart();
-  redirect(cart!.checkoutUrl);
+  try {
+    let cart = await getCart();
+    if (!cart) {
+      // Create a new cart if none exists (e.g., timeout earlier or missing cookie)
+      cart = await createCart();
+      (await cookies()).set('cartId', cart.id!);
+    }
+    if (!cart?.checkoutUrl) {
+      return 'Checkout unavailable at the moment. Please try again.';
+    }
+    redirect(cart.checkoutUrl);
+  } catch (e) {
+    console.error('redirectToCheckout failed', e);
+    return 'Checkout unavailable at the moment. Please try again.';
+  }
 }
 
 export async function createCartAndSetCookie() {

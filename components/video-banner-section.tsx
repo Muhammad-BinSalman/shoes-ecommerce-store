@@ -3,7 +3,7 @@ import CurvedLoop from './react-bits/curved-loop-text';
 
 export default function VideoBannerSection() {
   return (
-    <section className="w-full py-16 flex flex-col items-center">
+    <section className="w-full pt-14 pb-6 sm:pb-16 sm:py-16 flex flex-col items-center gap-7 sm:gap-0">
       <div className="w-full max-w-7xl xl:max-w-[1400px] grid grid-cols-1 md:grid-cols-2 gap-6 px-4">
         {/* Left Video */}
         <div className="relative rounded-3xl overflow-hidden shadow-lg bg-white">
@@ -13,7 +13,7 @@ export default function VideoBannerSection() {
             loop
             muted
             playsInline
-            className="w-full h-[450px] object-cover object-center"
+            className="w-full sm:h-[450px] h-[300px] object-cover object-center"
           />
           <Link
             href="/white-shoes"
@@ -30,7 +30,7 @@ export default function VideoBannerSection() {
             loop
             muted
             playsInline
-            className="w-full h-[450px] object-cover object-center"
+            className="w-full h-[300px] sm:h-[450px] object-cover object-center"
           />
           <Link
             href="/jordans-collection"

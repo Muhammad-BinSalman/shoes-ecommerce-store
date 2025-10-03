@@ -3,11 +3,11 @@ import { NextResponse } from 'next/server';
 
 // Define TypeScript interfaces
 interface OrderItem {
-  id: string;
+  id?: string;
   name: string;
-  price: number;
+  price: number | string;
   quantity: number;
-  image: string;
+  image?: string;
 }
 
 interface OrderData {
@@ -20,6 +20,10 @@ interface OrderData {
   items: OrderItem[];
   codFee: number;
   total: number;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_content?: string;
 }
 
 export async function POST(request: Request) {
@@ -66,7 +70,7 @@ export async function POST(request: Request) {
     try {
       const headerRes = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: `${sheetName}!A1:I1`,
+        range: `${sheetName}!A1:N1`,
       });
       
       headersExist = !!headerRes.data.values && headerRes.data.values.length > 0;
@@ -79,7 +83,7 @@ export async function POST(request: Request) {
       console.log('Creating headers...');
       await sheets.spreadsheets.values.update({
         spreadsheetId,
-        range: `${sheetName}!A1:I1`,
+        range: `${sheetName}!A1:N1`,
         valueInputOption: 'USER_ENTERED',
         requestBody: {
           values: [
@@ -93,7 +97,11 @@ export async function POST(request: Request) {
               'Total Items',
               'COD Fee',
               'Grand Total',
-              'Image URL'
+              'Image URL',
+              'utm_source',
+              'utm_medium',
+              'utm_campaign',
+              'utm_content'
             ]
           ]
         }
@@ -114,13 +122,17 @@ export async function POST(request: Request) {
         orderData.items.reduce((sum, item) => sum + item.quantity, 0),
         `PKR ${orderData.codFee}`,
         `PKR ${orderData.total}`,
-        orderData.items.map(item => item.image).join(', ')
+        orderData.items.map(item => item.image ?? '').join(', '),
+        orderData.utm_source || '',
+        orderData.utm_medium || '',
+        orderData.utm_campaign || '',
+        orderData.utm_content || ''
       ]
     ];
 
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: `${sheetName}!A:I`,
+      range: `${sheetName}!A:N`,
       valueInputOption: 'USER_ENTERED',
       requestBody: { values },
     });

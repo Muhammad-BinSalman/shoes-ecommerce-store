@@ -2,6 +2,7 @@ import { AddToCart } from 'components/cart/add-to-cart';
 import Price from 'components/price';
 import Prose from 'components/prose';
 import { Product } from 'lib/shopify/types';
+import { SizeChartDialog } from './size-chart-dialog';
 import { VariantSelector } from './variant-selector';
 
 export function ProductDescription({ product }: { product: Product }) {
@@ -17,6 +18,7 @@ export function ProductDescription({ product }: { product: Product }) {
         </div>
       </div>
       <VariantSelector options={product.options} variants={product.variants} />
+      <SizeChartDialog/>
       {product.descriptionHtml ? (
         <Prose
           className="mb-6 text-sm leading-tight"

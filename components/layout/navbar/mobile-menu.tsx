@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Fragment, Suspense, useEffect, useState } from 'react';
 
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import HamBurger from '@/components/icons/hamburger';
+import { ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Menu } from 'lib/shopify/types';
-import Search, { SearchSkeleton } from './search';
+import { MobileSearch, SearchSkeleton } from './search';
 
 export default function MobileMenu({ menu }: { menu: Menu[] }) {
   const pathname = usePathname();
@@ -18,7 +19,8 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768) {
+      // Close the mobile drawer at lg and above (>= 1024px)
+      if (window.innerWidth >= 1024) {
         setIsOpen(false);
       }
     };
@@ -35,9 +37,9 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
       <button
         onClick={openMobileMenu}
         aria-label="Open mobile menu"
-        className="flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors md:hidden"
+        // className="flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors"
       >
-        <Bars3Icon className="h-4" />
+        <HamBurger className="h-8 w-fit" />
       </button>
       <Transition show={isOpen}>
         <Dialog onClose={closeMobileMenu} className="relative z-50">
@@ -61,35 +63,58 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
             leaveFrom="translate-x-0"
             leaveTo="translate-x-[-100%]"
           >
-            <Dialog.Panel className="fixed bottom-0 left-0 right-0 top-0 flex h-full w-full flex-col bg-white pb-6">
-              <div className="p-4">
+            <Dialog.Panel className="fixed bottom-0  backdrop-blur-xl top-0 flex h-full w-full flex-col bg-white/80 max-w-xl">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b px-4 py-4">
+                <h2 className="text-lg font-bold text-black">Menu</h2>
                 <button
-                  className="mb-4 flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors"
+                  className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-200 text-black"
                   onClick={closeMobileMenu}
                   aria-label="Close mobile menu"
                 >
-                  <XMarkIcon className="h-6" />
+                  <XMarkIcon className="h-5" />
                 </button>
+              </div>
 
-                <div className="mb-4 w-full">
-                  <Suspense fallback={<SearchSkeleton />}>
-                    <Search />
-                  </Suspense>
-                </div>
+              {/* Search (mobile-friendly) */}
+              <div className="p-4 border-b">
+                <Suspense fallback={<SearchSkeleton />}>
+                  <MobileSearch />
+                </Suspense>
+              </div>
+
+              {/* Menu links */}
+              <div className="flex-1 overflow-y-auto">
                 {menu.length ? (
-                  <ul className="flex w-full flex-col">
+                  <ul className="flex w-full flex-col p-2">
                     {menu.map((item: Menu) => (
-                      <li
-                        className="py-2 text-xl text-black transition-colors hover:text-neutral-500"
-                        key={item.title}
-                      >
-                        <Link href={item.path} prefetch={true} onClick={closeMobileMenu}>
-                          {item.title}
+                      <li key={item.title}>
+                        <Link
+                          href={item.path}
+                          prefetch={true}
+                          onClick={closeMobileMenu}
+                          className="flex items-center justify-between gap-3 rounded-md px-3 py-3 text-base font-medium text-black hover:bg-neutral-50"
+                        >
+                          <span>{item.title}</span>
+                          <ChevronRightIcon className="h-4 w-4 text-neutral-500" />
                         </Link>
                       </li>
                     ))}
                   </ul>
                 ) : null}
+              </div>
+
+              {/* Footer links */}
+              <div className="mt-auto border-t px-4 py-3">
+                <div className="flex items-center gap-4 text-xs text-neutral-500">
+                  <Link href="/terms" prefetch={false} className="hover:underline" onClick={closeMobileMenu}>
+                    Terms of Service
+                  </Link>
+                  <span aria-hidden="true">•</span>
+                  <Link href="/privacy" prefetch={false} className="hover:underline" onClick={closeMobileMenu}>
+                    Privacy Policy
+                  </Link>
+                </div>
               </div>
             </Dialog.Panel>
           </Transition.Child>

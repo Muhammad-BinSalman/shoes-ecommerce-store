@@ -50,6 +50,7 @@ export async function generateMetadata(props: {
 export default async function ProductPage(props: { params: Promise<{ handle: string }> }) {
   const params = await props.params;
   const product = await getProduct(params.handle);
+  console.log(product, 'PRODUCT ARRAY')
 
   if (!product) return notFound();
 
@@ -69,7 +70,6 @@ export default async function ProductPage(props: { params: Promise<{ handle: str
       lowPrice: product.priceRange.minVariantPrice.amount
     }
   };
-
   return (
     <ProductProvider>
       <script
@@ -78,7 +78,7 @@ export default async function ProductPage(props: { params: Promise<{ handle: str
           __html: JSON.stringify(productJsonLd)
         }}
       />
-      <div className="mx-auto max-w-(--breakpoint-2xl) px-4">
+      <div className="mx-auto max-w-(--breakpoint-2xl) sm:px-4">
         <div className="flex flex-col rounded-lg border border-neutral-200 bg-white p-8 md:p-12 lg:flex-row lg:gap-8">
           <div className="h-full w-full basis-full lg:basis-4/6">
             <Suspense
@@ -87,7 +87,7 @@ export default async function ProductPage(props: { params: Promise<{ handle: str
               }
             >
               <Gallery
-                images={product.images.slice(0, 5).map((image: Image) => ({
+                images={product.images.slice(0, 7).map((image: Image) => ({
                   src: image.url,
                   altText: image.altText
                 }))}
@@ -101,7 +101,9 @@ export default async function ProductPage(props: { params: Promise<{ handle: str
             </Suspense>
           </div>
         </div>
+        <div className='px-4 sm:px-0'>
         <RelatedProducts id={product.id} />
+        </div>
       </div>
     </ProductProvider>
   );

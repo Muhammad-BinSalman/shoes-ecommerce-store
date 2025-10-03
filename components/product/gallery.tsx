@@ -5,6 +5,8 @@ import { GridTileImage } from 'components/grid/tile';
 import { useProduct, useUpdateURL } from 'components/product/product-context';
 import Image from 'next/image';
 
+const isDev = process.env.NODE_ENV !== 'production';
+
 export function Gallery({ images }: { images: { src: string; altText: string }[] }) {
   const { state, updateImage } = useProduct();
   const updateURL = useUpdateURL();
@@ -27,6 +29,7 @@ export function Gallery({ images }: { images: { src: string; altText: string }[]
             alt={images[imageIndex]?.altText as string}
             src={images[imageIndex]?.src as string}
             priority={true}
+            unoptimized={isDev}
           />
         )}
 

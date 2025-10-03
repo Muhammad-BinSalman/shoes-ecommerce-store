@@ -5,9 +5,10 @@ import clsx from 'clsx';
 import { addItem } from 'components/cart/actions';
 import { useProduct } from 'components/product/product-context';
 import { Product, ProductVariant } from 'lib/shopify/types';
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { useCart } from './cart-context';
 import { toast } from 'sonner';
+import { fbq } from '@/lib/metaPixel';
 
 function SubmitButton({
   availableForSale,
@@ -75,7 +76,19 @@ export function AddToCart({ product }: { product: Product }) {
   const finalVariant = variants.find(
     (variant) => variant.id === selectedVariantId
   )!;
-
+  fbq.addToCart({
+    content_ids: [product.id.toString()],
+    value: parseFloat(product.priceRange.minVariantPrice.amount),
+    currency: "PKR"
+  });
+  useEffect(() => {
+    fbq.viewContent({
+      content_ids: [product.id.toString()],
+      content_name: product.title,
+      value: parseFloat(product.priceRange.minVariantPrice.amount),
+      currency: "PKR"
+    });
+  }, [product]);
   return (
     <form
       action={async () => {

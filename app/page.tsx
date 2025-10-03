@@ -1,22 +1,25 @@
+import CallToAction from '@/components/call-to-action';
 import ConverseCtaSection from '@/components/converse-cta-section';
+import FAQsection from '@/components/faq/faq-section';
+import ContentSection from '@/components/green-promise';
 import LandingHero from '@/components/landing-hero';
+import LogoCloud from '@/components/logo-cloud';
 import NewSportsSection from '@/components/new-sports-section';
 import Testimonials from '@/components/testimonials';
-import LogoCloud from '@/components/logo-cloud';
-import ContentSection from '@/components/green-promise';
 import VideoBannerSection from '@/components/video-banner-section';
 import Carousel from 'components/carousel-swiper';
 import { ThreeItemGrid } from 'components/grid/three-items';
-import Footer from 'components/layout/footer';
 import { getCollectionProducts } from 'lib/shopify';
-import CallToAction from '@/components/call-to-action';
-import FAQsection from '@/components/faq/faq-section';
 
 export const metadata = {
   description:
-    'High-performance ecommerce store built with Next.js, Vercel, and Shopify.',
+    "Thumb Thrift PK — Pakistan's best online thrift store for cheap, authentic branded shoes: Nike Jordans, Converse, Adidas Sambas, Nike Air, football boots, canvas and more. Fast nationwide delivery.",
   openGraph: {
-    type: 'website'
+    type: 'website',
+    title: 'Thumb Thrift PK',
+    description:
+      "Pakistan's trusted online thrift shoe store for Nike Jordans, Converse, Adidas, Nike Air, football and canvas shoes at cheap prices.",
+    url: 'https://www.thumb-thrift.shop/'
   }
 };
 

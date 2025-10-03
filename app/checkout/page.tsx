@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import Link from "next/link";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { toast } from 'sonner';
+import { readUtmFromStorage } from "@/lib/utm";
 
 const COD_FEE = 350;
 
@@ -123,6 +124,7 @@ export default function CheckoutPage() {
     if (!validate()) return;
     setLoading(true);
     try {
+      const utm = readUtmFromStorage();
       // Send to Google Sheets
       const sheetRes = await fetch("/api/save-order-sheet", {
         method: "POST",
@@ -140,7 +142,8 @@ export default function CheckoutPage() {
             currency: line.cost.totalAmount.currencyCode
           })),
           codFee: COD_FEE,
-          total: grandTotal
+          total: grandTotal,
+          ...utm,
         })
       });
       if (!sheetRes.ok) {
@@ -175,6 +178,31 @@ export default function CheckoutPage() {
         alert(data.error ? `Order failed (Email): ${data.error}` : "Order failed. Please try again.");
         return;
       }
+      // Save order to our API with UTM params (best-effort, non-blocking)
+      try {
+        const utm = readUtmFromStorage();
+        const orderPayload = {
+          customer: {
+            ...form,
+            name: `${form.firstName}${form.lastName ? ' ' + form.lastName : ''}`.trim(),
+          },
+          items: cart.lines.map((line) => ({
+            image: line.merchandise.product.featuredImage?.url,
+            name: line.merchandise.product.title,
+            quantity: line.quantity,
+            price: line.cost.totalAmount.amount,
+            currency: line.cost.totalAmount.currencyCode
+          })),
+          codFee: COD_FEE,
+          total: grandTotal,
+          ...utm,
+        };
+        fetch("/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderPayload),
+        }).catch(() => {});
+      } catch (_) {}
       // Both succeeded
       toast.success('Order confirmed!', {
         description: 'Thank you for your purchase. We have received your order.',

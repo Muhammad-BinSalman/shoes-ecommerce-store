@@ -17,8 +17,8 @@ export function utmFromQuery(input: string | URLSearchParams): UtmParams {
     utm_content: pick("utm_content"),
   };
   // Remove undefined keys
-  Object.keys(utm).forEach((k) =>
-    (utm as any)[k] === undefined && delete (utm as any)[k]
+  Object.keys(utm).forEach(
+    (k) => (utm as any)[k] === undefined && delete (utm as any)[k],
   );
   return utm;
 }

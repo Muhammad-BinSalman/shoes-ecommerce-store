@@ -1,6 +1,5 @@
 "use client";
 
-
 export function Loader({ size = 24 }: { size?: number }) {
   const px = `${size}px`;
   return (

@@ -1,20 +1,21 @@
-import { RainbowButton } from 'components/ui/rainbow-button';
-import Footer from 'components/layout/footer';
-import Image from 'next/image';
-import Link from 'next/link';
-import { getCollectionProducts } from 'lib/shopify';
+import { RainbowButton } from "components/ui/rainbow-button";
+import Footer from "components/layout/footer";
+import Image from "next/image";
+import Link from "next/link";
+import { getCollectionProducts } from "lib/shopify";
 
 export const metadata = {
-  title: 'Kids Shoes',
-  description: 'Premium refurbished branded shoes for kids. Comfortable, stylish, and affordable footwear for children with free delivery across Pakistan.',
+  title: "Kids Shoes",
+  description:
+    "Premium refurbished branded shoes for kids. Comfortable, stylish, and affordable footwear for children with free delivery across Pakistan.",
   openGraph: {
-    type: 'website'
-  }
+    type: "website",
+  },
 };
 
 export default async function KidsPage() {
   // Fetch products from a collection (you can adjust this based on your Shopify setup)
-  const products = await getCollectionProducts({ collection: 'kids' });
+  const products = await getCollectionProducts({ collection: "kids" });
 
   return (
     <>
@@ -24,20 +25,25 @@ export default async function KidsPage() {
           <div className="text-center space-y-6 mb-32">
             <h1 className="text-5xl font-bold tracking-tight sm:text-7xl">
               Kids Collection
-              <br className='lg:block hidden' />
+              <br className="lg:block hidden" />
               Little Steps, Big Style
             </h1>
             <p className="max-w-2xl mx-auto text-muted-foreground md:text-lg">
-              Premium branded shoes for kids, carefully refurbished for comfort and style. 
-              Let your little ones step out in confidence with our affordable collection.
+              Premium branded shoes for kids, carefully refurbished for comfort
+              and style. Let your little ones step out in confidence with our
+              affordable collection.
             </p>
             <div className="flex justify-center items-center gap-7 relative">
               <span className="absolute -ml-6 -top-6 left-0 bg-pink-400 text-white text-lg px-3 py-1 rounded-full font-semibold rotate-[-8deg] shadow-md select-none">
                 Coming Soon
               </span>
-              <h3 className="text-3xl font-semibold text-[#ff331d]">Starting PKR.799</h3>
+              <h3 className="text-3xl font-semibold text-[#ff331d]">
+                Starting PKR.799
+              </h3>
               <RainbowButton>
-                <Link href="/search/kids" prefetch={false}>Shop Kids</Link>
+                <Link href="/search/kids" prefetch={false}>
+                  Shop Kids
+                </Link>
               </RainbowButton>
             </div>
           </div>
@@ -45,13 +51,15 @@ export default async function KidsPage() {
           {/* Featured Kids Section */}
           <div className="grid lg:grid-cols-2 gap-12 items-center mb-20 mt-8">
             <div className="space-y-6">
-              <h2 className="text-4xl font-bold">Perfect Fit for Growing Feet</h2>
+              <h2 className="text-4xl font-bold">
+                Perfect Fit for Growing Feet
+              </h2>
               <p className="text-muted-foreground text-lg">
-                Our kids collection features carefully selected branded shoes that provide 
-                the perfect balance of comfort, durability, and style. Each pair is 
-                professionally cleaned and refurbished to ensure the highest quality.
+                Our kids collection features carefully selected branded shoes
+                that provide the perfect balance of comfort, durability, and
+                style. Each pair is professionally cleaned and refurbished to
+                ensure the highest quality.
               </p>
-              
             </div>
             <div className="relative border w-full h-80 rounded-3xl overflow-hidden">
               <div className="absolute top-3 left-6 flex gap-2">
@@ -77,7 +85,8 @@ export default async function KidsPage() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Safety First</h3>
               <p className="text-muted-foreground mb-6">
-                All our kids shoes feature non-slip soles and secure fastenings for maximum safety during play.
+                All our kids shoes feature non-slip soles and secure fastenings
+                for maximum safety during play.
               </p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>• Non-slip rubber soles</li>
@@ -92,7 +101,8 @@ export default async function KidsPage() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Breathable Comfort</h3>
               <p className="text-muted-foreground mb-6">
-                Breathable materials and cushioned insoles ensure all-day comfort for active kids.
+                Breathable materials and cushioned insoles ensure all-day
+                comfort for active kids.
               </p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>• Mesh ventilation</li>
@@ -107,7 +117,8 @@ export default async function KidsPage() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Style & Fun</h3>
               <p className="text-muted-foreground mb-6">
-                Colorful designs and popular brand styles that kids love to wear every day.
+                Colorful designs and popular brand styles that kids love to wear
+                every day.
               </p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>• Vibrant colors</li>
@@ -118,22 +129,25 @@ export default async function KidsPage() {
           </div>
           {/* Parent Testimonials */}
           <div className="text-center mb-24">
-            <h1 className='text-9xl font-extrabold'>Launching Soon!</h1>
+            <h1 className="text-9xl font-extrabold">Launching Soon!</h1>
           </div>
 
           {/* Call to Action */}
           <div className="text-center bg-gradient-to-r from-pink-50 to-purple-50 rounded-3xl p-12 mb-28">
-            <h2 className="text-4xl font-bold mb-6">Get Notified When Available?</h2>
+            <h2 className="text-4xl font-bold mb-6">
+              Get Notified When Available?
+            </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              We will notify u whenever our children shoes stock will be available for u.
+              We will notify u whenever our children shoes stock will be
+              available for u.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
-              <input 
-                type="email" 
+              <input
+                type="email"
                 placeholder="Enter your email"
                 className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff331d]"
               />
-              <RainbowButton className='rounded-none h-full w-xl'>
+              <RainbowButton className="rounded-none h-full w-xl">
                 Get Notified
               </RainbowButton>
             </div>
@@ -144,10 +158,11 @@ export default async function KidsPage() {
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold mb-6">Kids Size Guide</h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Finding the perfect fit is important for growing feet. Use our size guide to ensure comfort and proper development.
+                Finding the perfect fit is important for growing feet. Use our
+                size guide to ensure comfort and proper development.
               </p>
             </div>
-            
+
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-white rounded-xl p-6 text-center">
                 <h3 className="font-bold text-lg mb-3">Toddler (1-3 years)</h3>
@@ -158,7 +173,9 @@ export default async function KidsPage() {
                 </div>
               </div>
               <div className="bg-white rounded-xl p-6 text-center">
-                <h3 className="font-bold text-lg mb-3">Little Kid (4-6 years)</h3>
+                <h3 className="font-bold text-lg mb-3">
+                  Little Kid (4-6 years)
+                </h3>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <p>UK: 7-10</p>
                   <p>EU: 24-28</p>
@@ -183,7 +200,6 @@ export default async function KidsPage() {
               </div>
             </div>
           </div>
-
         </div>
       </section>
       <Footer />

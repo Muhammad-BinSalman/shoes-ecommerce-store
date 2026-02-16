@@ -1,15 +1,17 @@
-import Footer from '@/components/layout/footer';
-import UtmCollector from '@/components/UtmCollector.client';
+import Footer from "@/components/layout/footer";
+import UtmCollector from "@/components/UtmCollector.client";
 import { Analytics } from "@vercel/analytics/next";
-import { CartProvider } from 'components/cart/cart-context';
-import { Navbar } from 'components/layout/navbar';
-import { WelcomeToast } from 'components/welcome-toast';
-import { GeistSans } from 'geist/font/sans';
-import { getCart } from 'lib/shopify';
-import Script from 'next/script';
-import { ReactNode } from 'react';
-import { Toaster } from 'sonner';
-import './globals.css';
+import { CartProvider } from "components/cart/cart-context";
+import { Navbar } from "components/layout/navbar";
+import { WelcomeToast } from "components/welcome-toast";
+import { GeistSans } from "geist/font/sans";
+import { getCart } from "lib/shopify";
+import Script from "next/script";
+import { ReactNode } from "react";
+import { Toaster } from "sonner";
+import "./globals.css";
+import { AnnouncementBar } from "@/components/layout/announcement-bar";
+import LayoutWithChatbot from "@/components/chatbot/layout-with-chatbot";
 
 const { SITE_NAME } = process.env;
 
@@ -17,7 +19,7 @@ export const metadata = {
   metadataBase: new URL("https://www.thumb-thrift.shop"),
   title: {
     default: SITE_NAME!,
-    template: `%s | ${SITE_NAME}`
+    template: `%s | ${SITE_NAME}`,
   },
   description:
     "Thumb Thrift PK is Pakistan's trusted online thrift shoe store for authentic Nike Jordans, Converse, Adidas Sambas, Nike Air, football boots, canvas and more — at unbeatable prices. Nationwide delivery.",
@@ -32,11 +34,11 @@ export const metadata = {
     "Nike Air Pakistan",
     "football shoes Pakistan",
     "canvas shoes Pakistan",
-    "cheap branded shoes Pakistan"
+    "cheap branded shoes Pakistan",
   ],
   applicationName: SITE_NAME!,
   alternates: {
-    canonical: "/"
+    canonical: "/",
   },
   openGraph: {
     type: "website",
@@ -51,27 +53,25 @@ export const metadata = {
         url: "https://www.thumb-thrift.shop/logo/logo-main.png",
         width: 800,
         height: 800,
-        alt: "Thumb Thrift PK Logo"
-      }
-    ]
+        alt: "Thumb Thrift PK Logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_NAME!,
     description:
       "Pakistan's trusted online thrift shoe store for Jordans, Converse, Adidas, Nike Air, football and canvas shoes at cheap prices.",
-    images: [
-      "https://www.thumb-thrift.shop/logo/logo-main.png"
-    ]
+    images: ["https://www.thumb-thrift.shop/logo/logo-main.png"],
   },
   robots: {
     follow: true,
-    index: true
-  }
+    index: true,
+  },
 };
 
 export default async function RootLayout({
-  children
+  children,
 }: {
   children: ReactNode;
 }) {
@@ -100,78 +100,95 @@ export default async function RootLayout({
               `}
             </Script>
             <noscript>
-              <img height="1" width="1" style={{display:'none'}}
-                   src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`} />
+              <img
+                height="1"
+                width="1"
+                style={{ display: "none" }}
+                src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
+              />
             </noscript>
           </>
         )}
         {/* Organization JSON-LD */}
-        <Script id="org-ld" type="application/ld+json" strategy="afterInteractive">{
-          JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Organization',
-            name: SITE_NAME ?? 'Thumb Thrift PK',
-            url: 'https://www.thumb-thrift.shop/',
-            logo: 'https://www.thumb-thrift.shop/logo/logo-main.png',
+        <Script
+          id="org-ld"
+          type="application/ld+json"
+          strategy="afterInteractive"
+        >
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: SITE_NAME ?? "Thumb Thrift PK",
+            url: "https://www.thumb-thrift.shop/",
+            logo: "https://www.thumb-thrift.shop/logo/logo-main.png",
             sameAs: [
-              'https://www.instagram.com/thumbthrift.pk/',
-              'https://wa.me/923343170959'
+              "https://www.instagram.com/thumbthrift.pk/",
+              "https://wa.me/923343170959",
             ],
-            contactPoint: [{
-              '@type': 'ContactPoint',
-              contactType: 'customer service',
-              telephone: '+92 334 3170959',
-              areaServed: 'PK'
-            }],
+            contactPoint: [
+              {
+                "@type": "ContactPoint",
+                contactType: "customer service",
+                telephone: "+92 334 3170959",
+                areaServed: "PK",
+              },
+            ],
             description:
-              "Thumb Thrift PK is Pakistan's trusted online thrift shoe store for authentic Nike Jordans, Converse, Adidas Sambas, Nike Air, football boots, canvas and more — at unbeatable prices.",
+              "Thumb Thrift PK is Pakistan's trusted online thrift shoe store for authentic thrifted shoes Nike Jordans, Converse, Adidas Sambas, Nike Air, football boots, canvas and more — at unbeatable prices.",
             brand: [
-              'Nike',
-              'Jordan',
-              'Converse',
-              'Adidas',
-              'Puma',
-              'New Balance',
-              'Reebok',
-              'Vans'
-            ]
-          })
-        }</Script>
+              "Nike",
+              "Jordan",
+              "Converse",
+              "Adidas",
+              "Puma",
+              "New Balance",
+              "Reebok",
+              "Vans",
+            ],
+          })}
+        </Script>
         {/* LocalBusiness JSON-LD (ShoeStore) */}
-        <Script id="localbusiness-ld" type="application/ld+json" strategy="afterInteractive">{
-          JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'ShoeStore',
-            name: SITE_NAME ?? 'Thumb Thrift PK',
-            url: 'https://www.thumb-thrift.shop/',
-            image: 'https://www.thumb-thrift.shop/logo/logo-main.png',
-            telephone: '+92 334 3170959',
+        <Script
+          id="localbusiness-ld"
+          type="application/ld+json"
+          strategy="afterInteractive"
+        >
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ShoeStore",
+            name: SITE_NAME ?? "Thumb Thrift PK",
+            url: "https://www.thumb-thrift.shop/",
+            image: "https://www.thumb-thrift.shop/logo/logo-main.png",
+            telephone: "+92 334 3170959",
             address: {
-              '@type': 'PostalAddress',
-              addressLocality: 'Karachi',
-              addressCountry: 'PK'
+              "@type": "PostalAddress",
+              addressLocality: "Karachi",
+              addressCountry: "PK",
             },
             areaServed: {
-              '@type': 'Country',
-              name: 'Pakistan'
+              "@type": "Country",
+              name: "Pakistan",
             },
             sameAs: [
-              'https://www.instagram.com/thumbthrift.pk/',
-              'https://wa.me/923343170959'
-            ]
-          })
-        }</Script>
+              "https://www.instagram.com/thumbthrift.pk/",
+              "https://wa.me/923343170959",
+            ],
+          })}
+        </Script>
       </head>
       <body className="bg-neutral-50 text-black selection:bg-teal-300">
         <CartProvider cartPromise={cart}>
           <UtmCollector />
+          <AnnouncementBar />
           <Navbar />
           <Toaster closeButton />
+          {/* <LayoutWithChatbot> */}
           <main>
             {children}
             <WelcomeToast />
           </main>
           <Footer />
+          {/* </LayoutWithChatbot> */}
         </CartProvider>
       </body>
     </html>

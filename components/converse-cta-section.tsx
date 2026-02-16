@@ -1,37 +1,43 @@
-import Image from 'next/image';
+import Image from "next/image";
+import { ThreeItemGrid } from "./grid/three-items";
+import Link from "next/link";
+import ViewAllButton from "./view-all-button";
+import CurvedLoop from "./react-bits/curved-loop-text";
 
 export default function ConverseCtaSection() {
   return (
-    <section className="w-full bg-[#fcf8f5] py-16 flex justify-center">
-      <div className="max-w-7xl w-full flex flex-col md:flex-row items-center gap-10 px-4 md:px-12">
-        {/* Text Block */}
-        <div className="flex-1 flex flex-col items-start text-left">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">Throwback Essentials</h2>
-          <p className="text-lg sm:text-xl text-neutral-700 mb-6 max-w-md">
-            Level up your look with trending picks like the adidas Samba
-          </p>
-          <a
-            href="/search?q=converse"
-            className="inline-flex items-center gap-2 px-6 py-2 mt-2 bg-black text-white text-lg font-extrabold tracking-widest uppercase rounded-full shadow hover:bg-neutral-800 transition-colors border-2 border-black"
+    <section className="w-full bg-[#f3f4f8] mt-16">
+      <Image
+        src="/banners/converse-banner-upscaled3.png"
+        alt="Converse Throwback Essentials"
+        width={500}
+        height={500}
+        className="object-cover w-full h-auto"
+        priority
+      />
+      <div className="py-5 relative -mt-1 rounded-t-2xl bg-white">
+        <div className="flex items-center justify-between px-5 pb-5">
+          <h3 className="text-lg sm:text-xl font-semibold">New Arrivals</h3>
+          <Link
+            href={""}
+            prefetch={false}
+            className="text-sm font-medium text-green-700 hover:underline"
           >
-            Shop Converse
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L21 12m0 0l-3.75 5.25M21 12H3" />
-            </svg>
-          </a>
+            View More
+          </Link>
         </div>
-        {/* Converse Image */}
-        <div className="flex-1 flex justify-center">
-          <Image
-            src="/banners/converse-banner.jpg"
-            alt="Converse Throwback Essentials"
-            width={500}
-            height={500}
-            className="object-cover w-full h-auto"
-            priority
+        <ThreeItemGrid />
+        <ViewAllButton viewMoreHref={"/products"} />
+        <div className="py-6">
+          <CurvedLoop
+            marqueeText="Thrift hard. ✦ Look rich. ✦ "
+            speed={1.5}
+            curveAmount={200}
+            interactive={true}
+            className="text-black bg-white"
           />
         </div>
       </div>
     </section>
   );
-} 
+}

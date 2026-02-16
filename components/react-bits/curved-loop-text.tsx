@@ -1,12 +1,12 @@
-"use client"
+"use client";
 import {
-    FC,
-    PointerEvent,
-    useEffect,
-    useId,
-    useMemo,
-    useRef,
-    useState,
+  FC,
+  PointerEvent,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 
 interface CurvedLoopProps {
@@ -133,7 +133,7 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
         viewBox="0 0 1440 120"
       >
         <text
-          ref={measureRef} 
+          ref={measureRef}
           xmlSpace="preserve"
           style={{ visibility: "hidden", opacity: 0, pointerEvents: "none" }}
         >
@@ -170,4 +170,4 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
   );
 };
 
-export default CurvedLoop; 
+export default CurvedLoop;

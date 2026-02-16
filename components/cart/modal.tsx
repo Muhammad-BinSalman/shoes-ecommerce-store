@@ -1,28 +1,30 @@
-'use client';
+"use client";
 
-import { Dialog, Transition } from '@headlessui/react';
-import { ShoppingCartIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import clsx from 'clsx';
-import LoadingDots from 'components/loading-dots';
-import Price from 'components/price';
-import { DEFAULT_OPTION } from 'lib/constants';
-import { createUrl } from 'lib/utils';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Fragment, useEffect, useRef, useState } from 'react';
-import { useFormStatus } from 'react-dom';
-import { createCartAndSetCookie, redirectToCheckout } from './actions';
-import { useCart } from './cart-context';
-import { DeleteItemButton } from './delete-item-button';
-import { EditItemQuantityButton } from './edit-item-quantity-button';
-import OpenCart from './open-cart';
+import { Dialog, Transition } from "@headlessui/react";
+import { ShoppingCartIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
+import LoadingDots from "components/loading-dots";
+import Price from "components/price";
+import { DEFAULT_OPTION } from "lib/constants";
+import { createUrl } from "lib/utils";
+import Image from "next/image";
+import Link from "next/link";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
+import { createCartAndSetCookie } from "./actions";
+import { useCart } from "./cart-context";
+import { DeleteItemButton } from "./delete-item-button";
+import { EditItemQuantityButton } from "./edit-item-quantity-button";
+import OpenCart from "./open-cart";
 
 type MerchandiseSearchParams = {
   [key: string]: string;
 };
 
+import { CartAddOn } from "./cart-add-on";
+
 export default function CartModal() {
-  const { cart, updateCartItem } = useCart();
+  const { cart, updateCartItem, includeSocks, toggleSocks, includeToteBag, toggleToteBag } = useCart();
   const [isOpen, setIsOpen] = useState(false);
   const quantityRef = useRef(cart?.totalQuantity);
   const openCart = () => setIsOpen(true);
@@ -87,8 +89,8 @@ export default function CartModal() {
                     {cart.lines
                       .sort((a, b) =>
                         a.merchandise.product.title.localeCompare(
-                          b.merchandise.product.title
-                        )
+                          b.merchandise.product.title,
+                        ),
                       )
                       .map((item, i) => {
                         const merchandiseSearchParams =
@@ -100,12 +102,12 @@ export default function CartModal() {
                               merchandiseSearchParams[name.toLowerCase()] =
                                 value;
                             }
-                          }
+                          },
                         );
 
                         const merchandiseUrl = createUrl(
                           `/product/${item.merchandise.product.handle}`,
-                          new URLSearchParams(merchandiseSearchParams)
+                          new URLSearchParams(merchandiseSearchParams),
                         );
 
                         return (
@@ -146,7 +148,7 @@ export default function CartModal() {
                                       {item.merchandise.product.title}
                                     </span>
                                     {item.merchandise.title !==
-                                    DEFAULT_OPTION ? (
+                                      DEFAULT_OPTION ? (
                                       <p className="text-sm text-neutral-500 dark:text-neutral-400">
                                         {item.merchandise.title}
                                       </p>
@@ -186,26 +188,86 @@ export default function CartModal() {
                       })}
                   </ul>
                   <div className="py-4 text-sm text-neutral-500 dark:text-neutral-400">
-                    <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 dark:border-neutral-700">
-                      <p>Taxes</p>
-                      <Price
-                        className="text-right text-base text-black dark:text-white"
-                        amount={cart.cost.totalTaxAmount.amount}
-                        currencyCode={cart.cost.totalTaxAmount.currencyCode}
+                    <div className="mb-4 rounded-lg bg-neutral-100 dark:bg-neutral-800">
+                      <h3 className='px-3 pt-2 text-xs font-semibold'>You may also like</h3>
+                      <CartAddOn
+                        title="Include White Crew Long Socks"
+                        price={150}
+                        imageSrc="/accesorries/socks.jpg"
+                        isSelected={includeSocks}
+                        onToggle={toggleSocks}
+                      />
+                      <CartAddOn
+                        title="Include Graphic Tote Bag"
+                        price={200}
+                        imageSrc="/accesorries/tote-bag.jpg"
+                        isSelected={includeToteBag}
+                        onToggle={toggleToteBag}
                       />
                     </div>
-                    <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
-                      <p>Shipping</p>
-                      <p className="text-right">Calculated at checkout</p>
-                    </div>
-                    <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
-                      <p>Total</p>
-                      <Price
-                        className="text-right text-base text-black dark:text-white"
-                        amount={cart.cost.totalAmount.amount}
-                        currencyCode={cart.cost.totalAmount.currencyCode}
-                      />
-                    </div>
+                    {(() => {
+                      const DELIVERY_FEE = 350;
+                      const SOCKS_PRICE = 150;
+                      const TOTE_PRICE = 200;
+                      const currency = cart.cost.subtotalAmount.currencyCode;
+                      const totalFromCart = Number(cart.cost.subtotalAmount.amount || 0);
+
+                      // Calculate display subtotal (original product total without add-ons)
+                      let subtotalDisplay = totalFromCart;
+                      if (includeSocks) subtotalDisplay -= SOCKS_PRICE;
+                      if (includeToteBag) subtotalDisplay -= TOTE_PRICE;
+
+                      const grandTotal = (totalFromCart + DELIVERY_FEE).toString();
+
+                      return (
+                        <>
+                          <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 dark:border-neutral-700">
+                            <p>Subtotal</p>
+                            <Price
+                              className="text-right text-base text-black dark:text-white"
+                              amount={subtotalDisplay.toString()}
+                              currencyCode={currency}
+                            />
+                          </div>
+                          {includeSocks && (
+                            <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 dark:border-neutral-700">
+                              <p>Socks Add-On</p>
+                              <Price
+                                className="text-right text-base text-black dark:text-white"
+                                amount={SOCKS_PRICE.toString()}
+                                currencyCode={currency}
+                              />
+                            </div>
+                          )}
+                          {includeToteBag && (
+                            <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 dark:border-neutral-700">
+                              <p>Tote Bag Add-On</p>
+                              <Price
+                                className="text-right text-base text-black dark:text-white"
+                                amount={TOTE_PRICE.toString()}
+                                currencyCode={currency}
+                              />
+                            </div>
+                          )}
+                          <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
+                            <p>Delivery Fee</p>
+                            <Price
+                              className="text-right text-base text-black dark:text-white"
+                              amount={DELIVERY_FEE.toString()}
+                              currencyCode={currency}
+                            />
+                          </div>
+                          <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
+                            <p>Grand Total</p>
+                            <Price
+                              className="text-right text-base text-black dark:text-white"
+                              amount={grandTotal}
+                              currencyCode={currency}
+                            />
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                   {cart && cart.lines.length > 0 && (
                     <CheckoutButton closeCart={closeCart} />
@@ -225,15 +287,15 @@ function CloseCart({ className }: { className?: string }) {
     <div className="relative flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors">
       <XMarkIcon
         className={clsx(
-          'h-6 transition-all ease-in-out hover:scale-110',
-          className
+          "h-6 transition-all ease-in-out hover:scale-110",
+          className,
         )}
       />
     </div>
   );
 }
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 type CheckoutButtonProps = { closeCart: () => void };
 
@@ -248,10 +310,10 @@ function CheckoutButton({ closeCart }: CheckoutButtonProps) {
       disabled={pending}
       onClick={() => {
         closeCart();
-        router.push('/checkout');
+        router.push("/checkout");
       }}
     >
-      {pending ? <LoadingDots className="bg-white" /> : 'Proceed to Checkout'}
+      {pending ? <LoadingDots className="bg-white" /> : "Proceed to Checkout"}
     </button>
   );
 }

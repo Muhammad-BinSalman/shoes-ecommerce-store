@@ -6,8 +6,8 @@ import { toast } from "sonner";
 
 export default function ThankYouPage() {
   useEffect(() => {
-    toast.success('Order confirmed!', {
-      description: 'Thank you for your purchase. We have received your order.',
+    toast.success("Order confirmed!", {
+      description: "Thank you for your purchase. We have received your order.",
     });
   }, []);
   return (

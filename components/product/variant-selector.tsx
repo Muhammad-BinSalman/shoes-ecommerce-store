@@ -1,84 +1,74 @@
-'use client';
+"use client";
 
-import clsx from 'clsx';
-import { useProduct, useUpdateURL } from 'components/product/product-context';
-import { ProductOption, ProductVariant } from 'lib/shopify/types';
+import clsx from "clsx";
+import { useProduct, useUpdateURL } from "components/product/product-context";
+import type { ProductOption } from "lib/shopify/types";
+import { startTransition, useEffect, useRef } from "react";
 
-type Combination = {
-  id: string;
-  availableForSale: boolean;
-  [key: string]: string | boolean;
-};
-
-export function VariantSelector({
-  options,
-  variants
-}: {
-  options: ProductOption[];
-  variants: ProductVariant[];
-}) {
+// Simplified VariantSelector: prioritizes a Size-like option, otherwise falls back to the first option
+export function VariantSelector({ options }: { options: ProductOption[] }) {
   const { state, updateOption } = useProduct();
   const updateURL = useUpdateURL();
 
-  if (!options.length) {
-    return null;
-  }
+  // Prefer an option whose name includes "size" (case-insensitive); otherwise use the first option
+  const targetOption =
+    options.find((o) => o.name.toLowerCase().includes("size")) ?? options[0];
+  if (!targetOption) return null;
 
-  const combinations: Combination[] = variants.map((variant) => ({
-    id: variant.id,
-    availableForSale: variant.availableForSale,
-    ...variant.selectedOptions.reduce(
-      (accumulator, option) => ({ ...accumulator, [option.name.toLowerCase()]: option.value }),
-      {}
-    )
-  }));
+  const optionKey = targetOption.name.toLowerCase();
+  const didInit = useRef(false);
 
-  return options.map((option) => (
-    <form key={option.id}>
+  // Auto-select the first value only once on initial mount if none is selected
+  useEffect(() => {
+    if (didInit.current) return;
+    if (!targetOption?.values?.length) return;
+    if (!state[optionKey]) {
+      const first = targetOption.values[0];
+      startTransition(() => {
+        //@ts-ignore
+        const newState = updateOption(optionKey, first);
+        updateURL(newState);
+      });
+    }
+    didInit.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetOption]);
+
+  return (
+    <form>
       <dl className="mb-8">
-        <dt className="mb-4 text-sm uppercase tracking-wide">{option.name}</dt>
+        <dt className="mb-4 text-base font-bold">{targetOption.name}</dt>
         <dd className="flex flex-wrap gap-3">
-          {option.values.map((value) => {
-            const optionNameLowerCase = option.name.toLowerCase();
-
-            // Base option params on current selectedOptions so we can preserve any other param state.
-            const optionParams = { ...state, [optionNameLowerCase]: value };
-
-            // Filter out invalid options and check if the option combination is available for sale.
-            const filtered = Object.entries(optionParams).filter(([key, value]) =>
-              options.find(
-                (option) => option.name.toLowerCase() === key && option.values.includes(value)
-              )
-            );
-            const isAvailableForSale = combinations.find((combination) =>
-              filtered.every(
-                ([key, value]) => combination[key] === value && combination.availableForSale
-              )
-            );
-
-            // The option is active if it's in the selected options.
-            const isActive = state[optionNameLowerCase] === value;
+          {targetOption.values.map((value) => {
+            const isActive = state[optionKey] === value;
 
             return (
               <button
-                formAction={() => {
-                  const newState = updateOption(optionNameLowerCase, value);
-                  updateURL(newState);
-                }}
                 key={value}
-                aria-disabled={!isAvailableForSale}
-                disabled={!isAvailableForSale}
-                title={`${option.name} ${value}${!isAvailableForSale ? ' (Out of Stock)' : ''}`}
+                type="submit"
+                title={`${targetOption.name} ${value}`}
                 className={clsx(
-                  'flex min-w-[48px] items-center justify-center rounded-full border bg-neutral-100 px-2 py-1 text-sm',
+                  "flex min-w-[40px] items-center justify-center rounded-full border p-2 text-sm",
                   {
-                    'cursor-default ring-2 ring-[#313e44]': isActive,
-                    'ring-1 ring-transparent transition duration-300 ease-in-out hover:ring-[#313e44]':
-                      !isActive && isAvailableForSale,
-                    'relative z-10 cursor-not-allowed overflow-hidden bg-neutral-100 text-neutral-500 ring-1 ring-neutral-300 before:absolute before:inset-x-0 before:-z-10 before:h-px before:-rotate-45 before:bg-neutral-300 before:transition-transform':
-                      !isAvailableForSale
-                  }
+                    "bg-primary-olive text-white border-primary-olive cursor-default":
+                      isActive,
+                    "bg-gray-300 text-white hover:bg-gray-400 transition-colors border-gray-300":
+                      !isActive,
+                  },
                 )}
+                formAction={() => {
+                  // Toggle: deselect if active, else select
+                  if (isActive) {
+                    const cleared = updateOption(optionKey, "");
+                    const filtered = Object.fromEntries(
+                      Object.entries(cleared).filter(([k, v]) => v && v !== ""),
+                    ) as Record<string, string>;
+                    updateURL(filtered);
+                  } else {
+                    const newState = updateOption(optionKey, value);
+                    updateURL(newState);
+                  }
+                }}
               >
                 {value}
               </button>
@@ -87,5 +77,5 @@ export function VariantSelector({
         </dd>
       </dl>
     </form>
-  ));
+  );
 }

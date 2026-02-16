@@ -1,8 +1,8 @@
-import { getCollections, getPages, getProducts } from 'lib/shopify';
-import { baseUrl, validateEnvironmentVariables } from 'lib/utils';
-import type { MetadataRoute } from 'next';
+import { getCollections, getPages, getProducts } from "lib/shopify";
+import { baseUrl, validateEnvironmentVariables } from "lib/utils";
+import type { MetadataRoute } from "next";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   validateEnvironmentVariables();
@@ -13,7 +13,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: `${baseUrl}/`,
       lastModified: now,
-      changeFrequency: 'weekly' as 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never',
+      changeFrequency: "weekly" as
+        | "always"
+        | "hourly"
+        | "daily"
+        | "weekly"
+        | "monthly"
+        | "yearly"
+        | "never",
       priority: 1,
     },
   ];
@@ -22,21 +29,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     collections.map((collection) => ({
       url: `${baseUrl}${collection.path}`,
       lastModified: collection.updatedAt,
-    }))
+    })),
   );
 
   const productsPromise = getProducts({}).then((products) =>
     products.map((product) => ({
       url: `${baseUrl}/product/${product.handle}`,
       lastModified: product.updatedAt,
-    }))
+    })),
   );
 
   const pagesPromise = getPages().then((pages) =>
     pages.map((page) => ({
       url: `${baseUrl}/${page.handle}`,
       lastModified: page.updatedAt,
-    }))
+    })),
   );
 
   let fetchedRoutes: MetadataRoute.Sitemap = [];

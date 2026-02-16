@@ -1,25 +1,20 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-import Link from 'next/link';
+import { motion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
 
 const categories = [
   {
-    name: 'Running',
-    image: '/banners/running-shoes-banner.jpg',
-    description: 'Engineered for performance and comfort'
+    name: "Running",
+    image: "/banners/running-shoes-banner.jpg",
+    description: "Engineered for performance and comfort",
   },
   {
-    name: 'Football',
-    image: '/banners/football-shoes-banner.jpg',
-    description: 'Dominate the field with precision'
+    name: "Football",
+    image: "/banners/football-shoes-banner.jpg",
+    description: "Dominate the field with precision",
   },
-  {
-    name: 'Cricket',
-    image: '/banners/cricket-shoes-banner.jpg',
-    description: 'Perfect grip for the perfect game'
-  }
 ];
 
 export default function NewSportsSection() {
@@ -31,11 +26,12 @@ export default function NewSportsSection() {
         transition={{ duration: 0.8 }}
         className="container mx-auto px-4"
       >
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
+        <h2 className="text-3xl md:text-5xl font-bold text-center mb-4">
           Sports Excellence
         </h2>
-        <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-          Discover our premium collection of sports footwear designed for peak performance
+        <p className="text-base text-gray-500 text-center mb-12 max-w-2xl mx-auto px-7">
+          Discover our premium collection of sports footwear designed for peak
+          performance
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -58,12 +54,14 @@ export default function NewSportsSection() {
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white transform transition-transform duration-300">
                 <h3 className="text-2xl font-bold mb-2">{category.name}</h3>
-                <p className="text-sm text-gray-200 mb-4">{category.description}</p>
+                <p className="text-sm text-gray-200 mb-4">
+                  {category.description}
+                </p>
                 <Link href={`/search?q=${category.name.toLowerCase()}`}>
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
-                    className="bg-white text-black cursor-pointer px-6 py-2 rounded-full font-semibold text-sm uppercase tracking-wider self-start hover:bg-opacity-90 transition-colors"
+                    className="bg-white/80 text-black cursor-pointer px-6 py-2 rounded-full font-semibold text-sm uppercase tracking-wider self-start hover:bg-opacity-90 transition-colors"
                   >
                     Shop Now
                   </motion.button>

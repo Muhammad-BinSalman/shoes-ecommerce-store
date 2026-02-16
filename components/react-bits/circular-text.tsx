@@ -1,10 +1,10 @@
-"use client"
+"use client";
 import {
-    motion,
-    MotionValue,
-    Transition,
-    useAnimation,
-    useMotionValue,
+  motion,
+  MotionValue,
+  Transition,
+  useAnimation,
+  useMotionValue,
 } from "framer-motion";
 import React, { useEffect } from "react";
 
@@ -18,7 +18,7 @@ interface CircularTextProps {
 const getRotationTransition = (
   duration: number,
   from: number,
-  loop: boolean = true
+  loop: boolean = true,
 ) => ({
   from,
   to: from + 360,
@@ -103,8 +103,8 @@ const CircularText: React.FC<CircularTextProps> = ({
 
   return (
     <motion.div
-    className={`m-0 mx-auto rounded-full w-[110px] h-[110px] sm:w-[128px] sm:h-[128px] relative font-black text-white text-center cursor-pointer origin-center ${className}`}
-    style={{ rotate: rotation }}
+      className={`m-0 mx-auto rounded-full w-[105px] h-[105px] sm:w-[128px] sm:h-[128px] relative font-black text-white text-center cursor-pointer origin-center ${className}`}
+      style={{ rotate: rotation }}
       initial={{ rotate: 0 }}
       animate={controls}
       onMouseEnter={handleHoverStart}
@@ -131,4 +131,4 @@ const CircularText: React.FC<CircularTextProps> = ({
   );
 };
 
-export default CircularText; 
+export default CircularText;

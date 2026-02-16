@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { Dialog, Transition } from '@headlessui/react';
-import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { Fragment, Suspense, useEffect, useState } from 'react';
+import { Dialog, Transition } from "@headlessui/react";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Fragment, Suspense, useEffect, useState } from "react";
 
-import HamBurger from '@/components/icons/hamburger';
-import { ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Menu } from 'lib/shopify/types';
-import { MobileSearch, SearchSkeleton } from './search';
+import HamBurger from "@/components/icons/hamburger";
+import { ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Menu } from "lib/shopify/types";
+import { MobileSearch, SearchSkeleton } from "./search";
 
 export default function MobileMenu({ menu }: { menu: Menu[] }) {
   const pathname = usePathname();
@@ -24,8 +24,8 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
         setIsOpen(false);
       }
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [isOpen]);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
         aria-label="Open mobile menu"
         // className="flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors"
       >
-        <HamBurger className="h-8 w-fit" />
+        <HamBurger className="h-8 w-fit text-primary-olive" />
       </button>
       <Transition show={isOpen}>
         <Dialog onClose={closeMobileMenu} className="relative z-50">
@@ -107,11 +107,21 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
               {/* Footer links */}
               <div className="mt-auto border-t px-4 py-3">
                 <div className="flex items-center gap-4 text-xs text-neutral-500">
-                  <Link href="/terms" prefetch={false} className="hover:underline" onClick={closeMobileMenu}>
+                  <Link
+                    href="/terms"
+                    prefetch={false}
+                    className="hover:underline"
+                    onClick={closeMobileMenu}
+                  >
                     Terms of Service
                   </Link>
                   <span aria-hidden="true">•</span>
-                  <Link href="/privacy" prefetch={false} className="hover:underline" onClick={closeMobileMenu}>
+                  <Link
+                    href="/privacy"
+                    prefetch={false}
+                    className="hover:underline"
+                    onClick={closeMobileMenu}
+                  >
                     Privacy Policy
                   </Link>
                 </div>

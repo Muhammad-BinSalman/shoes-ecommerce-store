@@ -1,31 +1,43 @@
-import clsx from 'clsx';
-import Price from './price';
+import clsx from "clsx";
+import Price from "./price";
 
 const Label = ({
+  className,
   title,
   amount,
   currencyCode,
-  position = 'bottom'
+  position = "bottom",
+  floatingTitle = false,
 }: {
+  className?: string;
   title: string;
   amount: string;
   currencyCode: string;
-  position?: 'bottom' | 'center';
+  position?: "bottom" | "center";
+  floatingTitle?: boolean;
 }) => {
   return (
     <div
-      className={clsx('absolute bottom-0 left-0 flex w-full px-4 pb-4 @container/label', {
-        'lg:px-20 lg:pb-[35%]': position === 'center'
-      })}
+      className={clsx(
+        "absolute flex justify-end pb-1.5 @container/label",
+        className,
+        {
+          "lg:px-20 lg:pb-[35%]": position === "center",
+        },
+      )}
     >
-      <div className="flex items-center rounded-full border bg-white/70 p-1 text-xs font-semibold text-black backdrop-blur-md">
-        <h3 className="mr-4 line-clamp-2 grow pl-2 leading-none tracking-tight">{title}</h3>
+      <div className="flex items-center rounded-full border bg-white/60 text-[11px] font-bold text-primary-olive backdrop-blur-md">
         <Price
-          className="flex-none rounded-full bg-black p-2 text-white"
+          className="flex-none rounded-2xl bg-primary-olive sm:p-2 p-1.5 py-1.5 text-gray-100"
           amount={amount}
           currencyCode={currencyCode}
           currencyCodeClassName="hidden @[275px]/label:inline"
         />
+        {floatingTitle ? (
+          <h3 className="mr-0 line-clamp-2 grow pl-1.5 leading-none tracking-tight">
+            {title}
+          </h3>
+        ) : null}
       </div>
     </div>
   );

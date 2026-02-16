@@ -1,9 +1,9 @@
-import { ShoppingCartIcon } from '@heroicons/react/24/outline';
-import clsx from 'clsx';
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
 
 export default function OpenCart({
   className,
-  quantity
+  quantity,
 }: {
   className?: string;
   quantity?: number;
@@ -11,7 +11,10 @@ export default function OpenCart({
   return (
     <div className="relative flex items-center justify-center text-black transition-colors">
       <ShoppingCartIcon
-        className={clsx('h-8 transition-all ease-in-out hover:scale-110 text-black', className)}
+        className={clsx(
+          "h-8 transition-all ease-in-out hover:scale-110 text-primary-olive",
+          className,
+        )}
       />
 
       {quantity ? (

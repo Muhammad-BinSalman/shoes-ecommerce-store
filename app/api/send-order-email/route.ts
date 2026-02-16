@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import nodemailer from 'nodemailer';
-
+import nodemailer from "nodemailer";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const EMAIL_USER = process.env.EMAIL_USER;
@@ -19,6 +18,10 @@ interface OrderData {
     email: string;
     phone: string;
     address: string;
+    city: string;
+    apartment?: string;
+    postalCode?: string;
+    country: string;
   };
   items: OrderItem[];
   codFee: number;
@@ -29,7 +32,7 @@ function formatOrderItems(items: OrderItem[]) {
   return items
     .map(
       (item) =>
-        `- ${item.name} (${item.quantity} × PKR ${item.price.toLocaleString()}) = PKR ${(item.quantity * item.price).toLocaleString()}`
+        `- ${item.name} (${item.quantity} × PKR ${item.price.toLocaleString()}) = PKR ${(item.quantity * item.price).toLocaleString()}`,
     )
     .join("\n");
 }
@@ -42,23 +45,29 @@ export async function POST(req: Request) {
     const orderTime = now.toLocaleString("en-PK", { hour12: true });
 
     if (!EMAIL_USER || !EMAIL_PASSWORD || !ADMIN_EMAIL) {
-      throw new Error('Gmail email configuration missing in environment');
+      throw new Error("Gmail email configuration missing in environment");
     }
     const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
+      host: "smtp.gmail.com",
       port: 465,
       secure: true,
-      auth: { user: EMAIL_USER, pass: EMAIL_PASSWORD }
+      auth: { user: EMAIL_USER, pass: EMAIL_PASSWORD },
     });
-    const emailText = `New COD Order Received!\n\nCustomer Details:\nName: ${customer.name}\nEmail: ${customer.email}\nPhone: ${customer.phone}\nAddress: ${customer.address}\n\nOrder Summary:\n${formatOrderItems(items)}\nCOD Fee: PKR 350\nTotal: PKR ${total.toLocaleString()}\n\nOrder Time: ${orderTime}`;
+
+    const fullAddress = `${customer.address}${customer.apartment ? `\nApartment: ${customer.apartment}` : ""}\nCity: ${customer.city}\nPostal Code: ${customer.postalCode ? `${customer.postalCode}\n` : ""}\nCountry: ${customer.country}`;
+
+    const emailText = `New COD Order Received!\n\nCustomer Details:\nName: ${customer.name}\nEmail: ${customer.email}\nPhone: ${customer.phone}\nAddress: ${fullAddress}\n\nOrder Summary:\n${formatOrderItems(items)}\nCOD Fee: PKR 350\nTotal: PKR ${total.toLocaleString()}\n\nOrder Time: ${orderTime}`;
     await transporter.sendMail({
       from: `Store Orders <${EMAIL_USER}>`,
       to: ADMIN_EMAIL,
       subject: "New COD Order!",
-      text: emailText
+      text: emailText,
     });
     return NextResponse.json({ success: true });
   } catch (e: any) {
-    return NextResponse.json({ success: false, error: e.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: e.message },
+      { status: 500 },
+    );
   }
 }

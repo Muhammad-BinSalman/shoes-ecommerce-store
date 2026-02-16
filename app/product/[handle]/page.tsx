@@ -1,14 +1,14 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { GridTileImage } from 'components/grid/tile';
-import { Gallery } from 'components/product/gallery';
-import { ProductProvider } from 'components/product/product-context';
-import { ProductDescription } from 'components/product/product-description';
-import { HIDDEN_PRODUCT_TAG } from 'lib/constants';
-import { getProduct, getProductRecommendations } from 'lib/shopify';
-import { Image } from 'lib/shopify/types';
-import Link from 'next/link';
-import { Suspense } from 'react';
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { GridTileImage } from "components/grid/tile";
+import { Gallery } from "components/product/gallery";
+import { ProductProvider } from "components/product/product-context";
+import { ProductDescription } from "components/product/product-description";
+import { HIDDEN_PRODUCT_TAG } from "lib/constants";
+import { getProduct, getProductRecommendations } from "lib/shopify";
+import { Image } from "lib/shopify/types";
+import Link from "next/link";
+import { Suspense } from "react";
 
 export async function generateMetadata(props: {
   params: Promise<{ handle: string }>;
@@ -29,8 +29,8 @@ export async function generateMetadata(props: {
       follow: indexable,
       googleBot: {
         index: indexable,
-        follow: indexable
-      }
+        follow: indexable,
+      },
     },
     openGraph: url
       ? {
@@ -39,47 +39,48 @@ export async function generateMetadata(props: {
               url,
               width,
               height,
-              alt
-            }
-          ]
+              alt,
+            },
+          ],
         }
-      : null
+      : null,
   };
 }
 
-export default async function ProductPage(props: { params: Promise<{ handle: string }> }) {
+export default async function ProductPage(props: {
+  params: Promise<{ handle: string }>;
+}) {
   const params = await props.params;
   const product = await getProduct(params.handle);
-  console.log(product, 'PRODUCT ARRAY')
 
   if (!product) return notFound();
 
   const productJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
+    "@context": "https://schema.org",
+    "@type": "Product",
     name: product.title,
     description: product.description,
     image: product.featuredImage.url,
     offers: {
-      '@type': 'AggregateOffer',
+      "@type": "AggregateOffer",
       availability: product.availableForSale
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/OutOfStock',
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
       priceCurrency: product.priceRange.minVariantPrice.currencyCode,
       highPrice: product.priceRange.maxVariantPrice.amount,
-      lowPrice: product.priceRange.minVariantPrice.amount
-    }
+      lowPrice: product.priceRange.minVariantPrice.amount,
+    },
   };
   return (
     <ProductProvider>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(productJsonLd)
+          __html: JSON.stringify(productJsonLd),
         }}
       />
       <div className="mx-auto max-w-(--breakpoint-2xl) sm:px-4">
-        <div className="flex flex-col rounded-lg border border-neutral-200 bg-white p-8 md:p-12 lg:flex-row lg:gap-8">
+        <div className="flex flex-col rounded-lg lg:border border-neutral-200 lg:bg-white p-4 md:p-12 lg:flex-row lg:gap-8">
           <div className="h-full w-full basis-full lg:basis-4/6">
             <Suspense
               fallback={
@@ -89,7 +90,7 @@ export default async function ProductPage(props: { params: Promise<{ handle: str
               <Gallery
                 images={product.images.slice(0, 7).map((image: Image) => ({
                   src: image.url,
-                  altText: image.altText
+                  altText: image.altText,
                 }))}
               />
             </Suspense>
@@ -101,8 +102,8 @@ export default async function ProductPage(props: { params: Promise<{ handle: str
             </Suspense>
           </div>
         </div>
-        <div className='px-4 sm:px-0'>
-        <RelatedProducts id={product.id} />
+        <div className="px-4 sm:px-0">
+          <RelatedProducts id={product.id} />
         </div>
       </div>
     </ProductProvider>
@@ -121,7 +122,7 @@ async function RelatedProducts({ id }: { id: string }) {
         {relatedProducts.map((product) => (
           <li
             key={product.handle}
-            className="aspect-square w-full flex-none min-[475px]:w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
+            className="aspect-square w-3/4 flex-none min-[475px]:w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
           >
             <Link
               className="relative h-full w-full"
@@ -129,11 +130,13 @@ async function RelatedProducts({ id }: { id: string }) {
               prefetch={true}
             >
               <GridTileImage
+                priceClassName="bottom-3 w-[80%]"
                 alt={product.title}
                 label={{
                   title: product.title,
                   amount: product.priceRange.maxVariantPrice.amount,
-                  currencyCode: product.priceRange.maxVariantPrice.currencyCode
+                  currencyCode: product.priceRange.maxVariantPrice.currencyCode,
+                  floatingTitle: true,
                 }}
                 src={product.featuredImage?.url}
                 fill

@@ -6,7 +6,8 @@ import { utmFromQuery, saveUtmToStorage } from "@/lib/utm";
 export default function UtmCollector() {
   useEffect(() => {
     try {
-      const search = typeof window !== "undefined" ? window.location.search : "";
+      const search =
+        typeof window !== "undefined" ? window.location.search : "";
       if (search) {
         const utm = utmFromQuery(search);
         if (Object.keys(utm).length > 0) {

@@ -72,7 +72,7 @@ export default function ShoeDonationPage() {
                                     <div>
                                         <h3 className="text-xl font-bold mb-2">Distribution Through Trusted NGOs</h3>
                                         <p className="text-gray-600 leading-relaxed mb-4">
-                                            We don't just buy the shoes; we ensure they reach the feet that need them most. We partner with reputable organizations for distribution:
+                                            We don't just buy the shoes; we ensure they reach the feet that need them most. We handover your donated shoes to the reputable NGOs for distribution and provide you the delivery receveing receipt:
                                         </p>
                                         <ul className="grid sm:grid-cols-2 gap-3">
                                             {["Alkhidmat Foundation", "Saylani Welfare International Trust", "Aman Foundation"].map((org) => (

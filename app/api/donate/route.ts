@@ -14,24 +14,22 @@ export async function POST(req: Request) {
         }
 
         // Configure email transporter
-        // Note: In a real production app, these should be environment variables.
-        // Assuming the user has these set up or will set them up.
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-                user: process.env.EMAIL_USER, // e.g. 'your-email@gmail.com'
-                pass: process.env.EMAIL_PASSWORD, // e.g. 'your-app-password'
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD,
             },
         });
 
         const mailOptions = {
-            from: process.env.GMAIL_USER,
-            to: process.env.ADMIN_EMAIL,
-            subject: `New Ramadan Donation Pledge: ${pairs} Pairs`,
+            from: process.env.EMAIL_USER,
+            to: process.env.ADMIN_EMAILc, // Send to self/admin
+            subject: `New Donation Payment Reported: ${pairs} Pairs`,
             html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-          <h2 style="color: #313e46;">New Donation Pledge</h2>
-          <p>A new donor has pledged to sponsor shoes.</p>
+          <h2 style="color: #313e46;">New Donation Payment Reported</h2>
+          <p>A donor has reported sending a payment via JazzCash/EasyPaisa.</p>
           
           <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
             <p><strong>Name:</strong> ${name}</p>
@@ -40,7 +38,7 @@ export async function POST(req: Request) {
             <p><strong>Total Amount:</strong> Rs. ${amount.toLocaleString()}</p>
           </div>
           
-          <p>Please reach out to the donor to coordinate the donation collection.</p>
+          <p>Please check your JazzCash/Bank account for the transaction and contact the donor for the receipt.</p>
         </div>
       `,
         };
@@ -49,7 +47,7 @@ export async function POST(req: Request) {
         await transporter.sendMail(mailOptions);
 
         return NextResponse.json(
-            { message: "Donation pledge received and email sent successfully" },
+            { message: "Donation reported successfully" },
             { status: 200 }
         );
     } catch (error) {

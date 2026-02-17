@@ -1,8 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CreditCard, Heart, Loader2 } from "lucide-react";
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CreditCard, Heart, Loader2 } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export default function DonationForm() {
@@ -50,7 +50,7 @@ export default function DonationForm() {
 
       if (response.ok) {
         setOpen(false);
-        toast.success("Thank you! A team member will reach out to you soon.");
+        toast.success("Thank you! Our team will contact you for receipts.");
         setName("");
         setPhone("");
       } else {
@@ -80,11 +80,10 @@ export default function DonationForm() {
               <button
                 key={option.value}
                 onClick={() => setPairs(option.value)}
-                className={`py - 3 px - 2 rounded - xl text - sm font - semibold transition - all border - 2 ${
-    pairs === option.value
-        ? "border-primary-olive bg-primary-olive text-white shadow-md transform scale-105"
-        : "border-gray-100 bg-gray-50 text-gray-600 hover:border-primary-olive/50 hover:bg-white"
-} `}
+                className={`py - 3 px - 2 rounded - xl text - sm font - semibold transition - all border - 2 ${pairs === option.value
+                  ? "border-primary-olive bg-primary-olive text-white shadow-md transform scale-105"
+                  : "border-gray-100 bg-gray-50 text-gray-600 hover:border-primary-olive/50 hover:bg-white"
+                  } `}
               >
                 {option.label}
               </button>
@@ -113,13 +112,34 @@ export default function DonationForm() {
             <DialogHeader>
               <DialogTitle>Complete Your Donation</DialogTitle>
               <DialogDescription>
-                Please enter your details. Our team will contact you to collect your
-                donation for {pairs} pair{pairs > 1 ? "s" : ""}.
+                Please transfer <strong>Rs. {totalAmount.toLocaleString()}</strong>{" "}
+                to the account below and confirm your details.
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+
+            <div className="bg-orange-50 p-4 rounded-xl border border-orange-100 my-2">
+              <h4 className="font-semibold text-primary-olive mb-2 flex items-center">
+                <CreditCard className="w-4 h-4 mr-2" /> JazzCash 
+              </h4>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Account Title:</span>
+                  <span className="font-medium text-gray-900">
+                    SALMAN AHMED 
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Account Number:</span>
+                  <span className="font-mono font-bold text-gray-900 bg-white px-2 rounded border border-orange-100">
+                    03315777066
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4 pt-2">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">Your Name</Label>
                 <Input
                   id="name"
                   placeholder="Enter your name"
@@ -129,7 +149,7 @@ export default function DonationForm() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">Your WhatsApp / Phone</Label>
                 <Input
                   id="phone"
                   placeholder="0300-1234567"
@@ -147,12 +167,15 @@ export default function DonationForm() {
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Submitting...
+                      Notifying Team...
                     </>
                   ) : (
-                    "Submit Pledge"
+                    "I Have Donated"
                   )}
                 </Button>
+                <p className="text-xs text-center text-gray-500 mt-2">
+                  Click after you have sent the payment.
+                </p>
               </div>
             </form>
           </DialogContent>

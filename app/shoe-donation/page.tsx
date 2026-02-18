@@ -75,7 +75,7 @@ export default function ShoeDonationPage() {
                                             We don't just buy the shoes; we ensure they reach the feet that need them most. We handover your donated shoes to the reputable NGOs for distribution and provide you the delivery receveing receipt:
                                         </p>
                                         <ul className="grid sm:grid-cols-2 gap-3">
-                                            {["Alkhidmat Foundation", "Saylani Welfare International Trust", "Aman Foundation"].map((org) => (
+                                            {["Alkhidmat Foundation", "Saylani Welfare Trust"].map((org) => (
                                                 <li key={org} className="flex items-center gap-2 text-sm font-medium text-gray-700 bg-gray-100 px-3 py-2 rounded-lg">
                                                     <CheckCircle2 className="w-4 h-4 text-green-600" />
                                                     {org}

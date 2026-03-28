@@ -63,7 +63,7 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
             leaveFrom="translate-x-0"
             leaveTo="translate-x-[-100%]"
           >
-            <Dialog.Panel className="fixed bottom-0  backdrop-blur-xl top-0 flex h-full w-full flex-col bg-white/80 max-w-xl">
+            <Dialog.Panel className="fixed bottom-0 backdrop-blur-xl top-0 flex h-[100dvh] w-full flex-col bg-white/80 max-w-xl">
               {/* Header */}
               <div className="flex items-center justify-between border-b px-4 py-4">
                 <h2 className="text-lg font-bold text-black">Menu</h2>
